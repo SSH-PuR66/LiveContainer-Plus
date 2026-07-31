@@ -32652,6 +32652,919 @@
           }
         }
       }
+    },
+    "lc.appGroup.addTo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add to Group"
+          }
+        }
+      }
+    },
+    "lc.appGroup.all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "lc.appGroup.appCount %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld apps"
+          }
+        }
+      }
+    },
+    "lc.appGroup.color" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        }
+      }
+    },
+    "lc.appGroup.edit" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Group"
+          }
+        }
+      }
+    },
+    "lc.appGroup.emptyTip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groups let you filter your app list. Create one to get started, then assign apps by holding an app and choosing “Add to Group”."
+          }
+        }
+      }
+    },
+    "lc.appGroup.icon" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icon"
+          }
+        }
+      }
+    },
+    "lc.appGroup.manage" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage Groups"
+          }
+        }
+      }
+    },
+    "lc.appGroup.members" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps"
+          }
+        }
+      }
+    },
+    "lc.appGroup.namePlaceholder" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Group name"
+          }
+        }
+      }
+    },
+    "lc.appGroup.new" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Group"
+          }
+        }
+      }
+    },
+    "lc.appGroup.ungrouped" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ungrouped"
+          }
+        }
+      }
+    },
+    "lc.backup.appsToInclude" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps to Include"
+          }
+        }
+      }
+    },
+    "lc.backup.auto" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic Backups"
+          }
+        }
+      }
+    },
+    "lc.backup.auto.enabled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back up automatically"
+          }
+        }
+      }
+    },
+    "lc.backup.auto.interval %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every %lld day(s)"
+          }
+        }
+      }
+    },
+    "lc.backup.auto.retention %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep %lld backup(s)"
+          }
+        }
+      }
+    },
+    "lc.backup.auto.scope" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents"
+          }
+        }
+      }
+    },
+    "lc.backup.auto.tip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An automatic backup runs when you open LiveContainer and one is due. Older backups beyond the limit are deleted."
+          }
+        }
+      }
+    },
+    "lc.backup.confirmDelete" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this backup?"
+          }
+        }
+      }
+    },
+    "lc.backup.createNow" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create Backup Now"
+          }
+        }
+      }
+    },
+    "lc.backup.createdAt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created"
+          }
+        }
+      }
+    },
+    "lc.backup.entryTip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export your app data, tweaks and LiveContainer settings to a single file you can keep or move to another device."
+          }
+        }
+      }
+    },
+    "lc.backup.error.archiveFailed" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to write the backup archive."
+          }
+        }
+      }
+    },
+    "lc.backup.error.extractionFailed %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to extract the backup (code %lld)."
+          }
+        }
+      }
+    },
+    "lc.backup.error.insufficientSpace %@ %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not enough free space. This backup needs about %@, but only %@ is available."
+          }
+        }
+      }
+    },
+    "lc.backup.error.manifestMissing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This file is not a LiveContainer backup (no manifest found)."
+          }
+        }
+      }
+    },
+    "lc.backup.error.manifestUnreadable" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This backup's manifest is damaged and cannot be read."
+          }
+        }
+      }
+    },
+    "lc.backup.error.noAppsSelected" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select at least one app to back up."
+          }
+        }
+      }
+    },
+    "lc.backup.error.unsupportedFormat %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This backup was made by a newer version of LiveContainer (format %lld). Update to restore it."
+          }
+        }
+      }
+    },
+    "lc.backup.estimatedSize" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estimated size"
+          }
+        }
+      }
+    },
+    "lc.backup.existing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backups"
+          }
+        }
+      }
+    },
+    "lc.backup.includeTweaks" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Include tweaks"
+          }
+        }
+      }
+    },
+    "lc.backup.newBackup" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Backup"
+          }
+        }
+      }
+    },
+    "lc.backup.noBackups" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No backups yet."
+          }
+        }
+      }
+    },
+    "lc.backup.progress.compressing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compressing…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.copying %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copying %@…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.extracting" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extracting…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.preparing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.restoring" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.restoringApp %@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restoring %@…"
+          }
+        }
+      }
+    },
+    "lc.backup.progress.writingManifest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Writing manifest…"
+          }
+        }
+      }
+    },
+    "lc.backup.restore" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
+    "lc.backup.restore.chooseApps" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps to Restore"
+          }
+        }
+      }
+    },
+    "lc.backup.restore.missingTip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some apps in this backup are not installed and their bundles were not included. Install them first, then restore again."
+          }
+        }
+      }
+    },
+    "lc.backup.restore.notInstalled" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not installed — install the app first"
+          }
+        }
+      }
+    },
+    "lc.backup.restore.preferences" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Also restore LiveContainer settings"
+          }
+        }
+      }
+    },
+    "lc.backup.restore.willOverwrite" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Will overwrite current data"
+          }
+        }
+      }
+    },
+    "lc.backup.scope" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contents"
+          }
+        }
+      }
+    },
+    "lc.backup.scope.appData" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings + app data"
+          }
+        }
+      }
+    },
+    "lc.backup.scope.appDataTip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App bundles are excluded. Reinstall the IPA, then restore this backup to get your data back."
+          }
+        }
+      }
+    },
+    "lc.backup.scope.everything" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything (incl. app bundles)"
+          }
+        }
+      }
+    },
+    "lc.backup.scope.everythingTip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Includes the app bundles themselves. Much larger, but restores without needing the original IPAs."
+          }
+        }
+      }
+    },
+    "lc.backup.scope.settingsOnly" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings only"
+          }
+        }
+      }
+    },
+    "lc.backup.selectAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select All"
+          }
+        }
+      }
+    },
+    "lc.backup.selectNone" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select None"
+          }
+        }
+      }
+    },
+    "lc.backup.share" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
+    "lc.backup.sourceVersion" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Created by"
+          }
+        }
+      }
+    },
+    "lc.backup.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Backup & Restore"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.error.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not check signing certificate"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.expired.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apps signed with this certificate will no longer launch. Refresh LiveContainer in SideStore or AltStore to renew it."
+          }
+        }
+      }
+    },
+    "lc.cert.banner.expired.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing certificate expired"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.expiring.body %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your apps will stop launching in %lld day(s). Refresh LiveContainer in SideStore or AltStore to renew it."
+          }
+        }
+      }
+    },
+    "lc.cert.banner.expiring.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing certificate expires soon"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.revoked.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple has revoked this certificate. Refresh LiveContainer in SideStore or AltStore to obtain a new one."
+          }
+        }
+      }
+    },
+    "lc.cert.banner.revoked.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing certificate revoked"
+          }
+        }
+      }
+    },
+    "lc.cert.notify.expired.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your apps will no longer launch until you refresh LiveContainer."
+          }
+        }
+      }
+    },
+    "lc.cert.notify.expired.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LiveContainer certificate expired"
+          }
+        }
+      }
+    },
+    "lc.cert.notify.expiring.body %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your signing certificate expires in %lld day(s). Refresh LiveContainer to keep your apps working."
+          }
+        }
+      }
+    },
+    "lc.cert.notify.expiring.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LiveContainer certificate expiring"
+          }
+        }
+      }
+    },
+    "lc.cert.notify.revoked.body" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple revoked your signing certificate. Refresh LiveContainer to obtain a new one."
+          }
+        }
+      }
+    },
+    "lc.cert.notify.revoked.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LiveContainer certificate revoked"
+          }
+        }
+      }
+    },
+    "lc.common.dismiss" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss"
+          }
+        }
+      }
+    },
+    "lc.common.save" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Many Sources"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.add" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add All"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.export" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Source List"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.result.added %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Added %lld source(s)."
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.result.duplicates %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipped %lld duplicate(s)."
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.result.invalid %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Could not read %lld entry/entries:"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.result.none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing to add."
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.resultTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Finished"
+          }
+        }
+      }
+    },
+    "lc.sources.bulk.tip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste one URL per line, or a JSON source list. Duplicates are skipped automatically."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

@@ -436,3 +436,37 @@
 
 
 @end
+
+BOOL LCZipDirectory(NSURL *directoryURL, NSURL *destinationURL, NSError **error) {
+    NSFileManager *manager = NSFileManager.defaultManager;
+
+    BOOL isDirectory = NO;
+    if (![manager fileExistsAtPath:directoryURL.path isDirectory:&isDirectory] || !isDirectory) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"LCZipDirectory" code:-1 userInfo:@{
+                NSLocalizedDescriptionKey: @"Source is not a directory."
+            }];
+        }
+        return NO;
+    }
+
+    dlopen("/System/Library/PrivateFrameworks/PassKitCore.framework/PassKitCore", RTLD_GLOBAL);
+    // PKZipArchiver archives the *contents* of the URL it is handed — that is why
+    // archiveIPAWithBundleName: passes Payload's parent to get "Payload/" as the root.
+    // Here the caller's staging directory contents land at the archive root.
+    NSData *zipData = [[NSClassFromString(@"PKZipArchiver") new] zippedDataForURL:directoryURL];
+    if (!zipData) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"LCZipDirectory" code:-2 userInfo:@{
+                NSLocalizedDescriptionKey: @"PKZipArchiver returned no data."
+            }];
+        }
+        return NO;
+    }
+
+    if ([manager fileExistsAtPath:destinationURL.path]) {
+        [manager removeItemAtURL:destinationURL error:nil];
+    }
+
+    return [zipData writeToURL:destinationURL options:NSDataWritingAtomic error:error];
+}

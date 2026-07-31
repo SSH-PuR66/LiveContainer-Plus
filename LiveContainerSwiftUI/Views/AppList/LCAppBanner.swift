@@ -291,6 +291,24 @@ struct LCAppBanner : View {
                                    children: subMenuActions)
         sectionChildren.append(addToHomeMenu)
 
+        // Submenu: Groups. Only meaningful once at least one group exists; groups are
+        // created from the app list's sort menu.
+        let groupManager = LCAppGroupManager.shared
+        if !groupManager.groups.isEmpty {
+            let groupActions = groupManager.groups.map { group in
+                let isMember = groupManager.isMember(model, ofGroup: group.id)
+                return UIAction(title: group.name,
+                                image: UIImage(systemName: group.symbolName),
+                                state: isMember ? .on : .off) { _ in
+                    groupManager.setMembership(model, groupId: group.id, isMember: !isMember)
+                }
+            }
+            let groupMenu = UIMenu(title: "lc.appGroup.addTo".loc,
+                                   image: UIImage(systemName: "folder"),
+                                   children: groupActions)
+            sectionChildren.append(groupMenu)
+        }
+
         // Settings
         let settingsAction = UIAction(title: "lc.tabView.settings".loc, image: UIImage(systemName: "gear")) { _ in
             openSettings()

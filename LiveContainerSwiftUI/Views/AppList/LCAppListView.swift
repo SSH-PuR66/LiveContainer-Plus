@@ -77,7 +77,11 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     @State private var helpPresent = false
     
     @State private var customSortViewPresent = false
-    
+
+    @State private var groupManagementPresent = false
+    @ObservedObject private var groupManager = LCAppGroupManager.shared
+    @ObservedObject private var certificateMonitor = LCCertificateMonitor.shared
+
     @EnvironmentObject private var sharedModel : SharedModel
     @EnvironmentObject private var sharedAppSortManager : LCAppSortManager
     
@@ -96,7 +100,7 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     }
     
     var filteredApps: [LCAppModel] {
-        let apps = sortedApps
+        let apps = groupManager.apply(groupManager.filter, to: sortedApps)
         if searchContext.debouncedQuery.isEmpty {
             return apps
         } else {
@@ -106,9 +110,9 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
             }
         }
     }
-    
+
     var filteredHiddenApps: [LCAppModel] {
-        let apps = sortedHiddenApps
+        let apps = groupManager.apply(groupManager.filter, to: sortedHiddenApps)
         if searchContext.debouncedQuery.isEmpty || !sharedModel.isHiddenAppUnlocked {
             return apps
         } else {
@@ -117,6 +121,12 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 app.appInfo.bundleIdentifier()!.localizedCaseInsensitiveContains(searchContext.debouncedQuery)
             }
         }
+    }
+
+    /// Apps offered to the grouping UI: hidden apps only once unlocked, so a group's
+    /// member list can't leak the existence of a hidden app.
+    var groupableApps: [LCAppModel] {
+        sharedModel.isHiddenAppUnlocked ? sortedApps + sortedHiddenApps : sortedApps
     }
     
     init(appDataFolderNames: Binding<[String]>, tweakFolderNames: Binding<[String]>, searchContext: SearchContext) {
@@ -136,7 +146,13 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                         EmptyView()
                 })
                 .hidden()
-                
+
+                LCCertificateBanner(monitor: certificateMonitor)
+
+                LCAppGroupBar(groupManager: groupManager,
+                              apps: groupableApps,
+                              onManageTapped: { groupManagementPresent = true })
+
                 LazyVStack {
                     ForEach(filteredApps, id: \.self) { app in
                         LCAppBanner(appModel: app, delegate: self, appDataFolders: $appDataFolderNames, tweakFolders: $tweakFolderNames)
@@ -278,12 +294,20 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                         }
                         if sharedAppSortManager.appSortType == .custom {
                             Divider()
-                            
+
                             Button {
                                 customSortViewPresent = true
                             } label: {
                                 Label("lc.appList.sort.customManage".loc, systemImage: "slider.horizontal.3")
                             }
+                        }
+
+                        Divider()
+
+                        Button {
+                            groupManagementPresent = true
+                        } label: {
+                            Label("lc.appGroup.manage".loc, systemImage: "folder.badge.gearshape")
                         }
                     } label: {
                         Label("Sort by", systemImage: "line.3.horizontal.decrease.circle")
@@ -379,6 +403,9 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 installUrlInput.close(result: nil)
             }
         )
+        .sheet(isPresented: $groupManagementPresent) {
+            LCAppGroupManagementView(groupManager: groupManager, apps: groupableApps)
+        }
         .sheet(isPresented: $jitAlert.show, onDismiss: {
             jitAlert.close(result: false)
         }) {
@@ -503,6 +530,19 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         for app in sharedModel.hiddenApps {
             app.delegate = self
         }
+        // Apps removed by another LiveContainer instance leave stale membership behind.
+        groupManager.pruneMissingApps(knownApps: sharedModel.apps + sharedModel.hiddenApps)
+
+        Task { await certificateMonitor.refreshIfStale() }
+
+        // Detached so a due backup never delays first paint of the app list.
+        let appsToBackUp = sharedModel.apps
+        let tweaksToBackUp = tweakFolderNames
+        Task {
+            await LCBackupManager.shared.runAutoBackupIfDue(apps: appsToBackUp,
+                                                            tweakFolderNames: tweaksToBackUp)
+        }
+
         didAppear = true
     }
     
@@ -983,13 +1023,14 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     
     func removeApp(app: LCAppModel) {
         DispatchQueue.main.async {
+            groupManager.removeFromAllGroups(app)
             sharedModel.apps.removeAll { now in
                 return app == now
             }
             sharedModel.hiddenApps.removeAll { now in
                 return app == now
             }
-            
+
         }
     }
     

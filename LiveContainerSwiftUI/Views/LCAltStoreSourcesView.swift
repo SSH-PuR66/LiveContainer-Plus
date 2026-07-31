@@ -183,6 +183,136 @@ final class AltStoreSourcesViewModel: ObservableObject {
         persistSources()
         removeCache(for: item.url)
     }
+
+    /// Outcome of a bulk import, so the UI can report what actually happened rather than
+    /// silently swallowing bad entries.
+    struct BulkImportResult {
+        var added: [URL] = []
+        var duplicates: [URL] = []
+        var invalid: [String] = []
+
+        var isEmpty: Bool { added.isEmpty && duplicates.isEmpty && invalid.isEmpty }
+    }
+
+    /// Adds many sources at once. Resolves LiveContainer/LiveContainer#1035.
+    ///
+    /// Accepts whitespace/comma-separated URLs as well as the JSON shapes shipped by
+    /// AltStore-family source lists (see `parseBulkSourceText`).
+    func addSources(fromBulkText text: String) async -> BulkImportResult {
+        var result = BulkImportResult()
+
+        let candidates = Self.parseBulkSourceText(text)
+        var newURLs: [URL] = []
+
+        for candidate in candidates {
+            guard let url = normalizeSourceURL(from: candidate) else {
+                result.invalid.append(candidate)
+                continue
+            }
+            // Guard against duplicates already stored *and* repeats within this paste.
+            if sources.contains(where: { $0.url == url }) || newURLs.contains(url) {
+                result.duplicates.append(url)
+                continue
+            }
+            newURLs.append(url)
+        }
+
+        guard !newURLs.isEmpty else { return result }
+
+        sources.append(contentsOf: newURLs.map { SourceItem(url: $0, isLoading: true) })
+        persistSources()
+        result.added = newURLs
+
+        await refreshSources(urls: newURLs)
+        return result
+    }
+
+    /// Fetches several sources concurrently, bounded so a large paste doesn't open
+    /// dozens of simultaneous connections.
+    func refreshSources(urls: [URL]) async {
+        let maxConcurrent = 4
+        var remaining = urls[...]
+
+        await withTaskGroup(of: Void.self) { group in
+            for _ in 0..<min(maxConcurrent, remaining.count) {
+                guard let next = remaining.popFirst() else { break }
+                group.addTask { [weak self] in
+                    await self?.refreshSource(url: next)
+                }
+            }
+
+            while await group.next() != nil {
+                guard let next = remaining.popFirst() else { continue }
+                group.addTask { [weak self] in
+                    await self?.refreshSource(url: next)
+                }
+            }
+        }
+    }
+
+    /// The current source list as a portable JSON document.
+    func exportSourcesJSON() -> Data? {
+        let payload: [String: Any] = [
+            "version": 1,
+            "exportedAt": ISO8601DateFormatter().string(from: Date()),
+            "sources": sources.map { item -> [String: Any] in
+                var entry: [String: Any] = ["sourceURL": item.url.absoluteString]
+                if let name = item.source?.name {
+                    entry["name"] = name
+                }
+                return entry
+            }
+        ]
+        return try? JSONSerialization.data(withJSONObject: payload,
+                                           options: [.prettyPrinted, .sortedKeys])
+    }
+
+    /// Extracts source URL strings from either JSON or free text.
+    ///
+    /// Handles the shapes that circulate in the sideloading community: a bare JSON array of
+    /// strings, an array of objects keyed `url`/`sourceURL`, an object with a `sources` key
+    /// holding either, and plain pasted text one URL per line.
+    static func parseBulkSourceText(_ text: String) -> [String] {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return [] }
+
+        if let data = trimmed.data(using: .utf8),
+           let json = try? JSONSerialization.jsonObject(with: data) {
+            if let extracted = extractURLStrings(fromJSON: json), !extracted.isEmpty {
+                return extracted
+            }
+        }
+
+        return trimmed
+            .components(separatedBy: CharacterSet(charactersIn: "\n\r\t ,;"))
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+    }
+
+    private static func extractURLStrings(fromJSON json: Any) -> [String]? {
+        if let array = json as? [Any] {
+            return array.compactMap { element -> String? in
+                if let string = element as? String { return string }
+                if let dict = element as? [String: Any] {
+                    return (dict["sourceURL"] as? String) ?? (dict["url"] as? String)
+                }
+                return nil
+            }
+        }
+
+        if let dict = json as? [String: Any] {
+            for key in ["sources", "sourceURLs", "urls"] {
+                if let nested = dict[key], let extracted = extractURLStrings(fromJSON: nested) {
+                    return extracted
+                }
+            }
+            if let single = (dict["sourceURL"] as? String) ?? (dict["url"] as? String) {
+                return [single]
+            }
+        }
+
+        return nil
+    }
     
     func refreshSource(_ item: SourceItem) async {
         await refreshSource(url: item.url)
@@ -733,6 +863,13 @@ private struct ManageSourcesSheet: View {
     @State private var isAddingManual = false
     @State private var sourcePendingRemoval: AltStoreSourcesViewModel.SourceItem?
     @FocusState private var isManualFieldFocused: Bool
+
+    @State private var bulkSourceValue = ""
+    @State private var isAddingBulk = false
+    @State private var bulkResultShown = false
+    @State private var bulkResultMessage = ""
+    @State private var exportSheetShown = false
+    @State private var exportedFileURL: URL?
     
     var body: some View {
         NavigationView {
@@ -796,6 +933,42 @@ private struct ManageSourcesSheet: View {
                 } header: {
                     Text("lc.sources.manage.manual".loc)
                 }
+
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        TextEditor(text: $bulkSourceValue)
+                            .frame(minHeight: 96)
+                            .font(.system(.footnote, design: .monospaced))
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+
+                        Button {
+                            attemptBulkAdd()
+                        } label: {
+                            if isAddingBulk {
+                                ProgressView().frame(maxWidth: .infinity)
+                            } else {
+                                Text("lc.sources.bulk.add".loc).frame(maxWidth: .infinity)
+                            }
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .disabled(bulkSourceValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isAddingBulk)
+
+                        Button {
+                            exportSources()
+                        } label: {
+                            Label("lc.sources.bulk.export".loc, systemImage: "square.and.arrow.up")
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(.bordered)
+                        .disabled(viewModel.sources.isEmpty)
+                    }
+                    .padding(.vertical, 4)
+                } header: {
+                    Text("lc.sources.bulk".loc)
+                } footer: {
+                    Text("lc.sources.bulk.tip".loc)
+                }
             }
             .listStyle(.insetGrouped)
             .navigationTitle("lc.sources.addSource".loc)
@@ -804,6 +977,16 @@ private struct ManageSourcesSheet: View {
                     Button("lc.common.close".loc) {
                         isPresented = false
                     }
+                }
+            }
+            .alert("lc.sources.bulk.resultTitle".loc, isPresented: $bulkResultShown) {
+                Button("lc.common.ok".loc, action: {})
+            } message: {
+                Text(bulkResultMessage)
+            }
+            .sheet(isPresented: $exportSheetShown) {
+                if let exportedFileURL {
+                    ActivityViewController(activityItems: [exportedFileURL])
                 }
             }
         }
@@ -851,6 +1034,53 @@ private struct ManageSourcesSheet: View {
                 isManualFieldFocused = false
             }
             isAddingManual = false
+        }
+    }
+
+    private func attemptBulkAdd() {
+        let text = bulkSourceValue
+        guard !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, !isAddingBulk else { return }
+        isAddingBulk = true
+        Task {
+            let result = await viewModel.addSources(fromBulkText: text)
+            isAddingBulk = false
+
+            if !result.added.isEmpty {
+                bulkSourceValue = ""
+            }
+
+            var lines: [String] = []
+            if !result.added.isEmpty {
+                lines.append("lc.sources.bulk.result.added %lld".localizeWithFormat(result.added.count))
+            }
+            if !result.duplicates.isEmpty {
+                lines.append("lc.sources.bulk.result.duplicates %lld".localizeWithFormat(result.duplicates.count))
+            }
+            if !result.invalid.isEmpty {
+                lines.append("lc.sources.bulk.result.invalid %lld".localizeWithFormat(result.invalid.count))
+                // Naming the offenders is what makes a partial failure fixable.
+                lines.append(result.invalid.prefix(5).joined(separator: "\n"))
+            }
+            if lines.isEmpty {
+                lines.append("lc.sources.bulk.result.none".loc)
+            }
+
+            bulkResultMessage = lines.joined(separator: "\n")
+            bulkResultShown = true
+        }
+    }
+
+    private func exportSources() {
+        guard let data = viewModel.exportSourcesJSON() else { return }
+        let url = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent("LiveContainer-Sources.json")
+        do {
+            try data.write(to: url, options: .atomic)
+            exportedFileURL = url
+            exportSheetShown = true
+        } catch {
+            bulkResultMessage = error.localizedDescription
+            bulkResultShown = true
         }
     }
 }

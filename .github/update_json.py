@@ -32,6 +32,23 @@ def fetch_latest_release(repo_url, is_nightly: bool):
         print(f"Error fetching releases: {e}")
         raise
 
+def fetch_seed_json(url, local_fallback):
+    """Load the previously published source JSON, falling back to the in-repo copy.
+
+    Each run seeds itself from the JSON attached to the "1.0" release so version history
+    accumulates. A fresh fork has no such release yet, so fall back to the checked-in file
+    rather than failing the job on a 404.
+    """
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        return response.json()
+    except (requests.RequestException, json.JSONDecodeError) as e:
+        print(f"Could not fetch {url} ({e}); seeding from {local_fallback} instead.")
+        with open(local_fallback, "r", encoding="utf-8") as handle:
+            return json.load(handle)
+
+
 def get_file_size(url):
     try:
         response = requests.head(url)
@@ -48,15 +65,8 @@ def update_json_file_release(repo_url, json_file, latest_release):
         print("Error getting latest release")
         return
 
-    try:
-        apps_json_url = f"https://github.com/{repo_url}/releases/download/1.0/apps.json"
-        response = requests.get(apps_json_url)
-        response.raise_for_status()
-        data = response.json()
-    except json.JSONDecodeError as e:
-        print(f"Error reading JSON file: {e}")
-        data = {"apps": []}
-        raise
+    data = fetch_seed_json(
+        f"https://github.com/{repo_url}/releases/download/1.0/apps.json", json_file)
 
     app = data["apps"][0]
 
@@ -165,8 +175,9 @@ def update_json_file_nightly(json_file, nightly_release):
     commit_sha = os.environ.get("commit_sha", "")[:7]
     commit_msg = os.environ.get("commit_msg", "").strip()
 
+    repo_url = os.environ.get("GITHUB_REPOSITORY") or "LiveContainer/LiveContainer"
     description = f"""\
-Nightly build from [{commit_sha}](https://github.com/LiveContainer/LiveContainer/commit/{commit_sha}):\
+Nightly build from [{commit_sha}](https://github.com/{repo_url}/commit/{commit_sha}):\
  {commit_msg}
 
 This is a nightly release [created automatically with GitHub Actions workflow]({nightly_link}).
@@ -226,15 +237,8 @@ def update_json_file_release_ss_lc(repo_url, json_file, latest_release, is_night
         print("Error getting latest release")
         return
 
-    try:
-        apps_json_url = f"https://github.com/{repo_url}/releases/download/1.0/apps_ss_lc.json"
-        response = requests.get(apps_json_url)
-        response.raise_for_status()
-        data = response.json()
-    except json.JSONDecodeError as e:
-        print(f"Error reading JSON file: {e}")
-        data = {"apps": []}
-        raise
+    data = fetch_seed_json(
+        f"https://github.com/{repo_url}/releases/download/1.0/apps_ss_lc.json", json_file)
 
     app = data["apps"][0]
 
@@ -251,7 +255,7 @@ def update_json_file_release_ss_lc(repo_url, json_file, latest_release, is_night
     commit_msg = os.environ.get("commit_msg", "").strip()
 
     description = f"""\
-Nightly build from [{commit_sha}](https://github.com/LiveContainer/LiveContainer/commit/{commit_sha}):\
+Nightly build from [{commit_sha}](https://github.com/{repo_url}/commit/{commit_sha}):\
  {commit_msg}
     """
     assets = latest_release.get("assets", [])
@@ -332,7 +336,11 @@ Nightly build from [{commit_sha}](https://github.com/LiveContainer/LiveContainer
 
 
 def main():
-    repo_url = "LiveContainer/LiveContainer"
+    # Read the repository from the Actions environment instead of hardcoding upstream.
+    # In a fork the hardcoded value would publish a source pointing at upstream's IPA,
+    # so users would silently install stock LiveContainer instead of this build.
+    repo_url = os.environ.get("GITHUB_REPOSITORY") or "LiveContainer/LiveContainer"
+    print(f"Publishing source for repository: {repo_url}")
     is_nightly = "NIGHTLY_LINK" in os.environ
 
     try:
@@ -340,14 +348,21 @@ def main():
         if is_nightly:
             json_file = "./.github/apps_nightly.json"
             update_json_file_nightly(json_file, fetched_data_latest)
-            update_json_file_release_ss_lc(repo_url, "./.github/apps_ss_lc.json", fetched_data_latest, True)
         else:
             json_file = "./.github/apps.json"
             update_json_file_release(repo_url, json_file, fetched_data_latest)
-            update_json_file_release_ss_lc(repo_url, "./.github/apps_ss_lc.json", fetched_data_latest, False)
     except Exception as e:
         print(f"An error occurred: {e}")
         raise
+
+    # The combined SideStore+LC source seeds itself from a previously published
+    # apps_ss_lc.json attached to the "1.0" release. A fresh fork has no such release,
+    # so treat this as best-effort rather than failing the whole release job.
+    try:
+        update_json_file_release_ss_lc(
+            repo_url, "./.github/apps_ss_lc.json", fetched_data_latest, is_nightly)
+    except Exception as e:
+        print(f"Skipping apps_ss_lc.json update (not fatal): {e}")
 
 if __name__ == "__main__":
     main()

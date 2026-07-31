@@ -98,7 +98,18 @@ struct LCDataManagementView : View {
                     Text("lc.settings.clearIconCache".loc)
                 }
             }
-            
+
+            Section {
+                NavigationLink {
+                    LCBackupView()
+                } label: {
+                    Label("lc.backup.title".loc, systemImage: "externaldrive.badge.timemachine")
+                }
+            } footer: {
+                Text("lc.backup.entryTip".loc)
+            }
+
+
             Section {
                 ForEach(folderPaths, id:\.desc) { path in
                     HStack(spacing: 10) {

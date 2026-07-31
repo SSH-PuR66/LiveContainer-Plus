@@ -70,3 +70,9 @@ typedef NS_ENUM(NSInteger, GeneratedIconStyle){
 BOOL saveCGImage(CGImageRef image, NSURL *url);
 CGImageRef loadCGImageFromURL(NSURL *url);
 NSNumber *LCGetDefaultClassicMode(NSURL *appURL);
+
+/// Zips the *contents* of `directoryURL` to `destinationURL`, contents at the archive root.
+///
+/// Wraps the private PKZipArchiver that `archiveIPAWithBundleName:` already relies on, so
+/// Swift callers don't have to reach for NSClassFromString themselves.
+BOOL LCZipDirectory(NSURL *directoryURL, NSURL *destinationURL, NSError **error);

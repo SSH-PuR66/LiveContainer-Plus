@@ -154,6 +154,28 @@ jobs:
             ${{ needs.build.outputs.artifact }}
             ${{ needs.build.outputs.artifact2 }}
             .github/apps_nightly.json
+
+      # The step above is the first point at which this run's release and its assets
+      # exist. update_json.py ran before that, so on a repository whose nightly release
+      # did not yet exist it had nothing to read and published the checked-in JSON
+      # verbatim -- which still pointed at whatever repo it was forked from. Re-run it
+      # now and overwrite the asset so the source always points at this repository.
+      - name: Refresh nightly source with this run's assets
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NIGHTLY_LINK: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}/attempts/${{ github.run_attempt }}
+          commit_sha: ${{ env.COMMIT_SHA }}
+          commit_msg: ${{ env.COMMIT_MSG }}
+        run: |
+          python .github/update_json.py
+          published=$(python -c "import json;print(json.load(open('.github/apps_nightly.json'))['apps'][0]['downloadURL'])")
+          echo "Published downloadURL: $published"
+          case "$published" in
+            *"${{ github.repository }}"*) echo "OK: source points at this repository." ;;
+            *) echo "::error::Source downloadURL points elsewhere: $published"; exit 1 ;;
+          esac
+          gh release upload nightly .github/apps_nightly.json --clobber --repo "${{ github.repository }}"
       - name: Update apps.json in Release 1.0
         uses: softprops/action-gh-release@v3
         with:

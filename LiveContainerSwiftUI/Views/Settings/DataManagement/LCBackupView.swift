@@ -107,28 +107,7 @@ struct LCBackupView: View {
                     .font(.footnote)
 
                     ForEach(candidateApps, id: \.self) { app in
-                        if let path = app.appInfo.relativeBundlePath {
-                            Button {
-                                if selectedAppPaths.contains(path) {
-                                    selectedAppPaths.remove(path)
-                                } else {
-                                    selectedAppPaths.insert(path)
-                                }
-                            } label: {
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text(app.displayName).foregroundStyle(.primary)
-                                        Text(app.bundleIdentifier)
-                                            .font(.caption)
-                                            .foregroundStyle(.gray)
-                                    }
-                                    Spacer()
-                                    if selectedAppPaths.contains(path) {
-                                        Image(systemName: "checkmark").foregroundStyle(.accentColor)
-                                    }
-                                }
-                            }
-                        }
+                        LCBackupAppRow(app: app, selectedAppPaths: $selectedAppPaths)
                     }
                 } header: {
                     Text("lc.backup.appsToInclude".loc)
@@ -301,6 +280,87 @@ struct LCBackupView: View {
     }
 }
 
+/// One selectable app in the backup picker.
+///
+/// Extracted from `LCBackupView.body`: inline, the nested Button/HStack/VStack with
+/// membership checks pushed the expression past what the type-checker will solve.
+private struct LCBackupAppRow: View {
+    @ObservedObject var app: LCAppModel
+    @Binding var selectedAppPaths: Set<String>
+
+    var body: some View {
+        if let path = app.appInfo.relativeBundlePath {
+            let isSelected = selectedAppPaths.contains(path)
+            Button {
+                if isSelected {
+                    selectedAppPaths.remove(path)
+                } else {
+                    selectedAppPaths.insert(path)
+                }
+            } label: {
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text(app.displayName)
+                            .foregroundStyle(.primary)
+                        Text(app.bundleIdentifier)
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                    }
+                    Spacer()
+                    if isSelected {
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.accentColor)
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// One selectable app in the restore picker, annotated with what restoring it would do.
+private struct LCRestoreAppRow: View {
+    let record: LCBackupAppRecord
+    let isConflicting: Bool
+    let isMissing: Bool
+    @Binding var selection: Set<String>
+
+    var body: some View {
+        let path = record.relativeBundlePath
+        let isSelected = selection.contains(path)
+
+        Button {
+            if isSelected {
+                selection.remove(path)
+            } else {
+                selection.insert(path)
+            }
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(record.displayName)
+                        .foregroundStyle(.primary)
+                    if isConflicting {
+                        Text("lc.backup.restore.willOverwrite".loc)
+                            .font(.caption)
+                            .foregroundStyle(.orange)
+                    } else if isMissing {
+                        Text("lc.backup.restore.notInstalled".loc)
+                            .font(.caption)
+                            .foregroundStyle(.gray)
+                    }
+                }
+                Spacer()
+                if isSelected {
+                    Image(systemName: "checkmark")
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+        }
+        // An app whose bundle is neither installed nor in the archive has nowhere to go.
+        .disabled(isMissing)
+    }
+}
+
 /// Confirmation step for a restore: shows what the archive holds and what will be overwritten.
 struct LCRestoreSheet: View {
     let plan: LCBackupManager.LCRestorePlan
@@ -349,35 +409,10 @@ struct LCRestoreSheet: View {
 
                 Section("lc.backup.restore.chooseApps".loc) {
                     ForEach(plan.manifest.apps) { record in
-                        Button {
-                            if selection.contains(record.relativeBundlePath) {
-                                selection.remove(record.relativeBundlePath)
-                            } else {
-                                selection.insert(record.relativeBundlePath)
-                            }
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(record.displayName).foregroundStyle(.primary)
-                                    if conflictingPaths.contains(record.relativeBundlePath) {
-                                        Text("lc.backup.restore.willOverwrite".loc)
-                                            .font(.caption)
-                                            .foregroundStyle(.orange)
-                                    } else if missingPaths.contains(record.relativeBundlePath) {
-                                        Text("lc.backup.restore.notInstalled".loc)
-                                            .font(.caption)
-                                            .foregroundStyle(.gray)
-                                    }
-                                }
-                                Spacer()
-                                if selection.contains(record.relativeBundlePath) {
-                                    Image(systemName: "checkmark").foregroundStyle(.accentColor)
-                                }
-                            }
-                        }
-                        // An app whose bundle is neither installed nor in the archive has
-                        // nowhere to restore into.
-                        .disabled(missingPaths.contains(record.relativeBundlePath))
+                        LCRestoreAppRow(record: record,
+                                        isConflicting: conflictingPaths.contains(record.relativeBundlePath),
+                                        isMissing: missingPaths.contains(record.relativeBundlePath),
+                                        selection: $selection)
                     }
                 }
 

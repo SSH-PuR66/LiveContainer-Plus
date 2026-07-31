@@ -53,7 +53,9 @@ struct LCBackupAppRecord: Codable, Identifiable, Hashable {
 }
 
 /// The `manifest.json` at the root of every backup archive.
-struct LCBackupManifest: Codable {
+///
+/// Hashable so `LCBackupFile`, which carries one, can synthesise its own conformance.
+struct LCBackupManifest: Codable, Hashable {
     /// Bumped when the on-disk layout changes incompatibly. Restore refuses anything higher.
     static let currentFormatVersion = 1
 

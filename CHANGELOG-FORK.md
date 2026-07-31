@@ -4,10 +4,10 @@ Changes layered on top of the upstream `LiveContainer-main` snapshot (extracted 
 `LiveContainer-main.zip`, 2026-07-31). See `COMPETITIVE-ANALYSIS.md` for the reasoning behind
 each item.
 
-> **Not yet compiled.** This work was authored on Windows; LiveContainer is an Xcode project
-> that builds only on macOS. Everything below is written against the existing APIs in this
-> tree and cross-checked by hand, but it has not been through a compiler or a device. Build it
-> on macOS before trusting it.
+> **Builds clean; not yet run on a device.** Authored on Windows and compiled by GitHub
+> Actions on `macos-latest` with Xcode 26.2 — `xcodebuild archive` succeeds and the IPA is
+> published to the `nightly` release. It has not been exercised on real hardware, so the
+> features are unverified at runtime even though they compile.
 
 ---
 
@@ -74,9 +74,37 @@ New Swift files need no `project.pbxproj` edit: `LiveContainerSwiftUI` is a
 - **Restore is non-destructive until confirmed**: `prepareRestore` extracts and reports a
   plan; `applyRestore` commits; `discardRestore` cleans up. Dismissing the sheet discards.
 
+## Installing from an iPad (no Mac required)
+
+GitHub's macOS runners do the build. Add this as an AltStore source in SideStore/AltStore:
+
+```
+https://github.com/SSH-PuR66/LiveContainer-Plus/releases/download/nightly/apps_nightly.json
+```
+
+It appears as **LiveContainer+ (fork nightly)**. Every push to `main` rebuilds and refreshes
+that source, so updates arrive over the air.
+
+The bundle identifier stays `com.kdt.livecontainer`, so this upgrades an existing
+LiveContainer in place and keeps its containers and app data. That also means it *replaces*
+stock LiveContainer rather than installing alongside it.
+
+## CI fixes required to make forks work
+
+- `update_json.py` read a hardcoded `LiveContainer/LiveContainer`; a fork would publish a
+  source pointing at upstream's IPA. Now reads `GITHUB_REPOSITORY`.
+- `update_json.py` ran *before* the nightly release was created, so a repo without a prior
+  release published the checked-in JSON verbatim — still carrying upstream's URL. A
+  post-release step now re-runs it, asserts the resulting `downloadURL` belongs to this
+  repository, and overwrites the published asset.
+- Source JSON now falls back to the in-repo copy when no `1.0` release exists, instead of
+  failing the job on a 404.
+- The archive step teed raw `xcodebuild` output; `xcpretty` was discarding every Swift
+  diagnostic, so a failed build reported only `** ARCHIVE FAILED **`.
+
 ## Known gaps
 
-- Not compiled or run — see the note at the top.
+- Compiles, but never launched on a device — no feature here is runtime-verified.
 - `LCBackupManager.readManifest` is unused by the current UI (the restore flow goes through
   `prepareRestore`); it is kept as a utility for a future backup-detail view.
 - Backups land in `Documents/Backups`. A user-chosen destination via

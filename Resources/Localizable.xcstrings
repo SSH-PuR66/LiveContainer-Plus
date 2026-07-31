@@ -33565,6 +33565,17 @@
           }
         }
       }
+    },
+    "lc.settings.basedOn" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based On"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

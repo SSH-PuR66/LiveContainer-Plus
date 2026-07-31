@@ -281,14 +281,29 @@ struct LCSettingsView: View {
                 Section {
                     HStack {
                         Image("GitHub")
-                        Button("LiveContainer/LiveContainer") {
+                        Button("SSH-PuR66/LiveContainer-Plus") {
                             openGitHub()
                         }
                     }
                     HStack {
                         Image("Twitter")
-                        Button("khanhduytran0") {
+                        Button("@sergrdZzZ") {
                             openTwitter()
+                        }
+                    }
+                } header: {
+                    Text("lc.settings.about".loc)
+                } footer: {
+                    Text("lc.settings.warning".loc)
+                }
+
+                // Upstream attribution. LiveContainer is Apache-2.0; keeping the original
+                // project and authors reachable is the courteous form for a fork.
+                Section {
+                    HStack {
+                        Image("GitHub")
+                        Button("LiveContainer/LiveContainer") {
+                            openUpstreamGitHub()
                         }
                     }
                     HStack {
@@ -298,9 +313,7 @@ struct LCSettingsView: View {
                         }
                     }
                 } header: {
-                    Text("lc.settings.about".loc)
-                } footer: {
-                    Text("lc.settings.warning".loc)
+                    Text("lc.settings.basedOn".loc)
                 }
                 
                 VStack{
@@ -463,15 +476,19 @@ struct LCSettingsView: View {
     }
     
     func openGitHub() {
+        UIApplication.shared.open(URL(string: "https://github.com/SSH-PuR66/LiveContainer-Plus")!)
+    }
+
+    func openUpstreamGitHub() {
         UIApplication.shared.open(URL(string: "https://github.com/LiveContainer/LiveContainer")!)
     }
-    
+
     func openGitHub2() {
         UIApplication.shared.open(URL(string: "https://github.com/hugeBlack")!)
     }
-    
+
     func openTwitter() {
-        UIApplication.shared.open(URL(string: "https://twitter.com/khanhduytran0")!)
+        UIApplication.shared.open(URL(string: "https://x.com/sergrdZzZ")!)
     }
 
     func clearNotifications() {

@@ -1,7 +1,7 @@
 {
   "name": "LiveContainer+ (fork nightly)",
   "identifier": "com.livecontainer.source.nightly.fork",
-  "website": "https://github.com/LiveContainer/LiveContainer",
+  "website": "https://github.com/SSH-PuR66/LiveContainer-Plus",
   "subtitle": "Fork with app groups, backups and certificate monitoring",
   "description": "This is the official AltStore Source for LiveContainer (nightly).\n\n Run iOS apps without actually installing them!",
   "tintColor": "#0784FC",
@@ -12,7 +12,7 @@
       "beta": false,
       "name": "LiveContainer+",
       "bundleIdentifier": "com.kdt.livecontainer",
-      "developerName": "LiveContainer Team",
+      "developerName": "sergrdZzZ",
       "subtitle": "Groups, backup/restore, certificate health",
       "version": "3.4.50",
       "versionDate": "2025-04-26",

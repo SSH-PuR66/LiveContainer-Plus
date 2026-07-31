@@ -51,6 +51,7 @@ class LCCertificateMonitor: ObservableObject {
     private static let lastCheckKey = "LCCertLastHealthCheck"
     private static let notifiedThresholdsKey = "LCCertNotifiedThresholds"
     private static let trackedExpiryKey = "LCCertTrackedExpiry"
+    private static let pendingBatchResignKey = "LCCertPendingBatchResign"
 
     /// How long a successful result is trusted before re-validating.
     private static let recheckInterval: TimeInterval = 6 * 60 * 60
@@ -64,10 +65,23 @@ class LCCertificateMonitor: ObservableObject {
     /// whenever the health changes so a new problem always resurfaces.
     @Published var bannerDismissed = false
 
+    /// True when the certificate was replaced with a different one and the installed apps
+    /// are still signed by the old identity.
+    ///
+    /// Persisted: the renewal is detected on one launch but the user may not act until a
+    /// later one, and until they do every app is still carrying a stale signature.
+    @Published private(set) var pendingBatchResign = false
+
     private var isChecking = false
 
     private init() {
         lastChecked = LCUtils.appGroupUserDefault.object(forKey: Self.lastCheckKey) as? Date
+        pendingBatchResign = LCUtils.appGroupUserDefault.bool(forKey: Self.pendingBatchResignKey)
+    }
+
+    func clearPendingBatchResign() {
+        pendingBatchResign = false
+        LCUtils.appGroupUserDefault.set(false, forKey: Self.pendingBatchResignKey)
     }
 
     var daysRemaining: Int? {
@@ -149,6 +163,14 @@ class LCCertificateMonitor: ObservableObject {
                 LCUtils.appGroupUserDefault.set(date, forKey: Self.trackedExpiryKey)
                 LCUtils.appGroupUserDefault.set([Int](), forKey: Self.notifiedThresholdsKey)
                 bannerDismissed = false
+
+                // `tracked == nil` is a first run or a fresh install: the apps were signed
+                // by whatever identity is current, so there is nothing stale to re-sign.
+                // A *changed* expiry means the identity was replaced under them.
+                if tracked != nil {
+                    pendingBatchResign = true
+                    LCUtils.appGroupUserDefault.set(true, forKey: Self.pendingBatchResignKey)
+                }
             }
         }
 

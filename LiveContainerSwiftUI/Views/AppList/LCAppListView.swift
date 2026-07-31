@@ -81,6 +81,7 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
     @State private var groupManagementPresent = false
     @ObservedObject private var groupManager = LCAppGroupManager.shared
     @ObservedObject private var certificateMonitor = LCCertificateMonitor.shared
+    @ObservedObject private var batchSigner = LCBatchSigner.shared
 
     @EnvironmentObject private var sharedModel : SharedModel
     @EnvironmentObject private var sharedAppSortManager : LCAppSortManager
@@ -147,7 +148,9 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                 })
                 .hidden()
 
-                LCCertificateBanner(monitor: certificateMonitor)
+                LCCertificateBanner(monitor: certificateMonitor,
+                                    batchSigner: batchSigner,
+                                    appsToResign: sharedModel.apps + sharedModel.hiddenApps)
 
                 LCAppGroupBar(groupManager: groupManager,
                               apps: groupableApps,

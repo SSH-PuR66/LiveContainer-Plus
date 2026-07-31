@@ -73,6 +73,7 @@ struct LCSettingsView: View {
     @AppStorage("BKNoWatchdogs") var disableLiveProcessWatchdog = false
     
     @EnvironmentObject private var sharedModel : SharedModel
+    @ObservedObject private var batchSigner = LCBatchSigner.shared
     
     @State private var isViewAppeared = false
     
@@ -277,7 +278,38 @@ struct LCSettingsView: View {
                         Text("lc.settings.dataManagement".loc)
                     }
                 }
-                
+
+                Section {
+                    Button {
+                        let apps = sharedModel.apps + sharedModel.hiddenApps
+                        Task { await batchSigner.resignAll(apps: apps) }
+                    } label: {
+                        if batchSigner.isRunning {
+                            Text("lc.cert.banner.resigning %lld %lld".localizeWithFormat(
+                                batchSigner.completed, batchSigner.total))
+                        } else {
+                            Text("lc.settings.resignAll".loc)
+                        }
+                    }
+                    .disabled(batchSigner.isRunning || sharedModel.apps.isEmpty)
+
+                    if !batchSigner.failures.isEmpty {
+                        ForEach(batchSigner.failures, id: \.name) { failure in
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(failure.name).font(.footnote)
+                                Text(failure.reason)
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                    }
+                } header: {
+                    Text("lc.settings.signing".loc)
+                } footer: {
+                    Text("lc.settings.resignAll.tip".loc)
+                }
+
+
                 Section {
                     HStack {
                         Image("GitHub")

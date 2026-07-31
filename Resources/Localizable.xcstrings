@@ -33576,6 +33576,94 @@
           }
         }
       }
+    },
+    "lc.cert.banner.renewed.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing certificate renewed"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.renewed.body %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld app(s) are still signed with the old certificate and will pause to re-sign the next time you open them. Re-sign them all now to avoid that."
+          }
+        }
+      }
+    },
+    "lc.cert.banner.renewed.action" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-sign All Now"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.renewed.later" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Later"
+          }
+        }
+      }
+    },
+    "lc.cert.banner.resigning %lld %lld" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-signing apps… %lld of %lld"
+          }
+        }
+      }
+    },
+    "lc.settings.signing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signing"
+          }
+        }
+      }
+    },
+    "lc.settings.resignAll" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-sign All Apps"
+          }
+        }
+      }
+    },
+    "lc.settings.resignAll.tip" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signs every installed app with the current certificate. Useful after the certificate is renewed, or if an app refuses to launch."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

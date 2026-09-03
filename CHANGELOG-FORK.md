@@ -4,10 +4,15 @@ Changes layered on top of the upstream `LiveContainer-main` snapshot (extracted 
 `LiveContainer-main.zip`, 2026-07-31). See `COMPETITIVE-ANALYSIS.md` for the reasoning behind
 each item.
 
-> **Builds clean; not yet run on a device.** Authored on Windows and compiled by GitHub
-> Actions on `macos-latest` with Xcode 26.2 — `xcodebuild archive` succeeds and the IPA is
-> published to the `nightly` release. It has not been exercised on real hardware, so the
-> features are unverified at runtime even though they compile.
+> **Runs on a device.** Compiled by GitHub Actions on `macos-latest` with Xcode 26.2 and
+> published to the `nightly` release. On 2026-09-03 both nightly artifacts were re-signed from
+> Windows with a free-tier development identity and installed over stock LiveContainer 3.8.0 on
+> an iPhone 17 running iOS 26.6; each launched, and the existing guest-app container survived the
+> upgrade. Signing needed rcodesign rather than zsign: the SideStore variant embeds
+> `SideStoreApp.framework` with frameworks nested inside it, and zsign seals the parent before it
+> re-signs the children (`0xe8008017`). Recipe: `tools/filament/rcsign.py` in
+> [SSH-PuR66/filament](https://github.com/SSH-PuR66/filament). Extensions are stripped at signing
+> time on a free-tier profile. The new features have been opened, not yet exercised end to end.
 
 ---
 

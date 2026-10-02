@@ -482,6 +482,9 @@ class LCBackupManager: ObservableObject {
         // Creation uses the refreshed inventory to verify the written archive. Keep that
         // dependency explicit now that UI refresh requests return before their scan finishes.
         await refreshBackupListAndWait()
+        if let error = backupListError {
+            throw LCBackupError.archiveFailed("Backup was written, but its folder could not be read. Previous backups were retained: \(error)")
+        }
         pruneOldBackups()
         await backupListRefresher.waitUntilSettled()
 
@@ -689,6 +692,8 @@ class LCBackupManager: ObservableObject {
 
     /// Keeps the newest `retentionCount` archives and deletes the rest.
     func pruneOldBackups() {
+        // A preserved display list is not a current inventory for destructive retention.
+        guard backupListError == nil else { return }
         let keep = retentionCount
         guard backups.count > keep else { return }
         for backup in backups.dropFirst(keep) {

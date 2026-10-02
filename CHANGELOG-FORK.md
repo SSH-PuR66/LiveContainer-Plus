@@ -24,6 +24,7 @@ each item.
 - Extracted Foundation signing-date rules: missing/invalid expiry is unknown, future/nonfinite check timestamps refresh, and a future expiry under one day is not already expired.
 - Added native date and real temporary-directory tests before the workflow's Archive step, plus English/Spanish copy.
 - Moved backup directory enumeration, metadata reads and sorting off the main actor. A Foundation refresh coordinator applies only the latest request, discards cancelled results, and preserves the existing missing-folder/read-error behavior. Added controlled overlapping-request and cancellation tests; no measured speedup or CVE claim.
+- Retention skips deletion when the current backup inventory is unreadable. Creation reports that the archive was written and earlier backups were retained, rather than pruning from the preserved display list.
 - Corrected README licensing to the checked-in GNU AGPL v3; LICENSE itself is unchanged.
 
 These changes still require a successful macOS/Xcode build and device verification. The September 3 report above concerns earlier artifacts.

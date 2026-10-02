@@ -153,6 +153,7 @@ class LCBackupManager: ObservableObject {
     ]
 
     @Published private(set) var backups: [LCBackupFile] = []
+    @Published private(set) var backupListError: String?
     @Published private(set) var isBusy = false
     @Published private(set) var progressText: String = ""
     @Published private(set) var progressFraction: Double = 0
@@ -241,12 +242,14 @@ class LCBackupManager: ObservableObject {
     // MARK: - Listing
 
     func refreshBackupList() {
-        let fm = FileManager.default
-        guard let entries = try? fm.contentsOfDirectory(
-            at: Self.backupDirectory,
-            includingPropertiesForKeys: [.fileSizeKey, .creationDateKey],
-            options: [.skipsHiddenFiles]) else {
-            backups = []
+        let entries: [URL]
+        switch LCBackupListing.read(at: Self.backupDirectory) {
+        case .files(let files):
+            entries = files
+            backupListError = nil
+        case .unavailable(let error):
+            // Preserve the last list, but never present a failed read as an empty folder.
+            backupListError = error
             return
         }
 

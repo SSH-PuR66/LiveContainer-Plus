@@ -156,6 +156,10 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
                               apps: groupableApps,
                               onManageTapped: { groupManagementPresent = true })
 
+                if filteredApps.isEmpty && (!sharedModel.isHiddenAppUnlocked || filteredHiddenApps.isEmpty) {
+                    emptyAppList
+                }
+
                 LazyVStack {
                     ForEach(filteredApps, id: \.self) { app in
                         LCAppBanner(appModel: app, delegate: self, appDataFolders: $appDataFolderNames, tweakFolders: $tweakFolderNames)
@@ -329,7 +333,8 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
             Text(errorInfo)
         }
         .betterFileImporter(isPresented: $choosingIPA, types: [.ipa, .tipa], multiple: false, callback: { fileUrls in
-            Task { await startInstallApp(fileUrls[0]) }
+            guard let fileURL = fileUrls.first else { return }
+            Task { await startInstallApp(fileURL) }
         }, onDismiss: {
             choosingIPA = false
         })
@@ -533,20 +538,37 @@ struct LCAppListView : View, LCAppBannerDelegate, LCAppModelDelegate {
         for app in sharedModel.hiddenApps {
             app.delegate = self
         }
-        // Apps removed by another LiveContainer instance leave stale membership behind.
-        groupManager.pruneMissingApps(knownApps: sharedModel.apps + sharedModel.hiddenApps)
-
-        Task { await certificateMonitor.refreshIfStale() }
-
-        // Detached so a due backup never delays first paint of the app list.
-        let appsToBackUp = sharedModel.apps
-        let tweaksToBackUp = tweakFolderNames
-        Task {
-            await LCBackupManager.shared.runAutoBackupIfDue(apps: appsToBackUp,
-                                                            tweakFolderNames: tweaksToBackUp)
-        }
-
         didAppear = true
+    }
+
+    private var emptyAppList: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "square.stack.3d.up").font(.largeTitle).foregroundStyle(.secondary)
+            if !searchContext.debouncedQuery.isEmpty || groupManager.filter != .all {
+                Text("lc.appList.empty.filtered".loc).font(.headline)
+                Text("lc.appList.empty.filteredBody".loc).foregroundStyle(.secondary)
+                Button("lc.appList.empty.clearFilters".loc) {
+                    searchContext.query = ""
+                    groupManager.filter = .all
+                }
+                .buttonStyle(.bordered)
+            } else if sharedModel.multiLCStatus == 2 {
+                Text("lc.appList.empty.secondary".loc).font(.headline)
+                Text("lc.appList.manageInPrimaryTip".loc).foregroundStyle(.secondary)
+            } else {
+                Text("lc.appList.empty.title".loc).font(.headline)
+                Text("lc.appList.empty.body".loc).foregroundStyle(.secondary)
+                Button("lc.appList.empty.chooseFile".loc) { choosingIPA = true }
+                    .buttonStyle(.borderedProminent)
+                    .disabled(installprogressVisible)
+                Button("lc.home.browseSources".loc) { sharedModel.selectedTab = .sources }
+                    .buttonStyle(.bordered)
+            }
+        }
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
+        .frame(maxWidth: .infinity)
+        .padding(24)
     }
     
     

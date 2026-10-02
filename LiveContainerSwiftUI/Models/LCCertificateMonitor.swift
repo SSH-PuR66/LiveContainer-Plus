@@ -14,30 +14,6 @@ import Foundation
 import Combine
 import UserNotifications
 
-enum LCCertificateHealth {
-    /// No certificate configured — JIT-less signing is not in use.
-    case notConfigured
-    /// Validation has not run yet this launch.
-    case checking
-    case valid(daysRemaining: Int)
-    case expiringSoon(daysRemaining: Int)
-    case expired
-    case revoked
-    case error(String)
-
-    /// Days below which the banner turns from informational to urgent.
-    static let warningThresholdDays = 7
-
-    var isActionable: Bool {
-        switch self {
-        case .expiringSoon, .expired, .revoked, .error:
-            return true
-        case .notConfigured, .checking, .valid:
-            return false
-        }
-    }
-}
-
 @MainActor
 class LCCertificateMonitor: ObservableObject {
 
@@ -52,9 +28,6 @@ class LCCertificateMonitor: ObservableObject {
     private static let notifiedThresholdsKey = "LCCertNotifiedThresholds"
     private static let trackedExpiryKey = "LCCertTrackedExpiry"
     private static let pendingBatchResignKey = "LCCertPendingBatchResign"
-
-    /// How long a successful result is trusted before re-validating.
-    private static let recheckInterval: TimeInterval = 6 * 60 * 60
 
     @Published private(set) var health: LCCertificateHealth = .checking
     @Published private(set) var expirationDate: Date?
@@ -86,9 +59,11 @@ class LCCertificateMonitor: ObservableObject {
 
     var daysRemaining: Int? {
         guard let expirationDate else { return nil }
-        let seconds = expirationDate.timeIntervalSinceNow
-        guard seconds > 0 else { return 0 }
-        return Int(seconds / (24 * 60 * 60))
+        switch LCCertificateHealth.validated(expirationDate: expirationDate) {
+        case .valid(let days), .expiringSoon(let days): return days
+        case .expired: return 0
+        default: return nil
+        }
     }
 
     // MARK: - Checking
@@ -106,10 +81,8 @@ class LCCertificateMonitor: ObservableObject {
             await refresh()
             return
         }
-        guard let lastChecked,
-              Date().timeIntervalSince(lastChecked) < Self.recheckInterval else {
+        if LCCertificateHealth.needsRefresh(lastChecked: lastChecked) {
             await refresh()
-            return
         }
     }
 
@@ -118,6 +91,9 @@ class LCCertificateMonitor: ObservableObject {
 
         guard LCUtils.certificateData() != nil, LCSharedUtils.certificatePassword() != nil else {
             health = .notConfigured
+            expirationDate = nil
+            organizationalUnit = nil
+            lastChecked = nil
             return
         }
 
@@ -176,14 +152,7 @@ class LCCertificateMonitor: ObservableObject {
 
         switch result.status {
         case 0:
-            let days = daysRemaining ?? Int.max
-            if days <= 0 {
-                health = .expired
-            } else if days <= LCCertificateHealth.warningThresholdDays {
-                health = .expiringSoon(daysRemaining: days)
-            } else {
-                health = .valid(daysRemaining: days)
-            }
+            health = LCCertificateHealth.validated(expirationDate: result.date)
         case 1:
             health = .revoked
         default:
@@ -200,6 +169,7 @@ class LCCertificateMonitor: ObservableObject {
     private func sameCase(_ lhs: LCCertificateHealth, _ rhs: LCCertificateHealth) -> Bool {
         switch (lhs, rhs) {
         case (.notConfigured, .notConfigured), (.checking, .checking),
+             (.expiryUnavailable, .expiryUnavailable),
              (.expired, .expired), (.revoked, .revoked):
             return true
         case (.valid(let a), .valid(let b)), (.expiringSoon(let a), .expiringSoon(let b)):

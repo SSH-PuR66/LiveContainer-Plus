@@ -53,6 +53,14 @@ jobs:
           file_to_build=`ls -A | grep -i \\.xcworkspace\$ || ls -A | grep -i \\.xcodeproj\$`
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           echo "file_to_build=$file_to_build" >> $GITHUB_OUTPUT
+      - name: Test native readiness and backup listing
+        run: |
+          set -euo pipefail
+          test_binary="$RUNNER_TEMP/livecontainer-readiness-tests"
+          xcrun swiftc LiveContainerSwiftUI/Models/LCCertificateHealth.swift \
+            LiveContainerSwiftUI/Models/LCBackupListing.swift \
+            .github/tests/home/main.swift -o "$test_binary"
+          "$test_binary"
       - name: Archive
         env:
           scheme: ${{ steps.scheme.outputs.scheme }}

@@ -103,6 +103,7 @@ class SharedModel: ObservableObject {
     
     init() {
         updateMultiLCStatus()
+        selectedTab = multiLCStatus == 2 ? .apps : .home
     }
 }
 
@@ -309,6 +310,7 @@ extension NSNotification {
 }
 
 public enum LCTabIdentifier: Hashable {
+    case home
     case sources
     case apps
     case tweaks

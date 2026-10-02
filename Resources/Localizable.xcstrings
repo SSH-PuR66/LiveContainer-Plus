@@ -1,6 +1,669 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "lc.home.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Home"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicio"
+          }
+        }
+      }
+    },
+    "lc.home.intro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your apps and data, in one place."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus apps y datos, en un solo lugar."
+          }
+        }
+      }
+    },
+    "lc.home.device %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device software: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Software del dispositivo: %@"
+          }
+        }
+      }
+    },
+    "lc.home.openApps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open my apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir mis apps"
+          }
+        }
+      }
+    },
+    "lc.home.apps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tus apps"
+          }
+        }
+      }
+    },
+    "lc.home.apps.count %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Visible apps on this device: %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps visibles en este dispositivo: %lld"
+          }
+        }
+      }
+    },
+    "lc.home.apps.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open My Apps to choose an app file, or browse Sources."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre Mis apps para elegir un archivo, o busca en Fuentes."
+          }
+        }
+      }
+    },
+    "lc.home.browseSources": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Browse app sources"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explorar fuentes de apps"
+          }
+        }
+      }
+    },
+    "lc.home.signing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Opening apps"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir apps"
+          }
+        }
+      }
+    },
+    "lc.home.signing.notConfigured": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No signing certificate saved"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay un certificado de firma guardado"
+          }
+        }
+      }
+    },
+    "lc.home.signing.checking": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Checking signing setup…"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobando la firma…"
+          }
+        }
+      }
+    },
+    "lc.home.signing.valid %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing checked · %lld days left"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Firma comprobada · quedan %lld días"
+          }
+        }
+      }
+    },
+    "lc.home.signing.expiring %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renew signing soon · %lld days left"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renueva la firma pronto · quedan %lld días"
+          }
+        }
+      }
+    },
+    "lc.home.signing.lessThanDay": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing expires in less than a day"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La firma caduca en menos de un día"
+          }
+        }
+      }
+    },
+    "lc.home.signing.expiryUnknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expiry date unavailable"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fecha de caducidad desconocida"
+          }
+        }
+      }
+    },
+    "lc.home.signing.expiryUnknownBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The signing check returned no expiry date. Open Settings to review it."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La comprobación no devolvió una fecha de caducidad. Revísala en Ajustes."
+          }
+        }
+      }
+    },
+    "lc.home.signing.expired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing expired"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La firma ha caducado"
+          }
+        }
+      }
+    },
+    "lc.home.signing.revoked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing was revoked"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La firma ha sido revocada"
+          }
+        }
+      }
+    },
+    "lc.home.signing.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signing could not be checked"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudo comprobar la firma"
+          }
+        }
+      }
+    },
+    "lc.home.signing.updateApps": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A signing update is pending. Open My Apps for details."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hay una actualización de firma pendiente. Consulta Mis apps."
+          }
+        }
+      }
+    },
+    "lc.home.signing.limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apps can still need extra setup. Open Help if an app won't open."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Algunas apps pueden necesitar configuración adicional. Abre Ayuda si una app no se abre."
+          }
+        }
+      }
+    },
+    "lc.home.checked %@": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last check: %@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Última comprobación: %@"
+          }
+        }
+      }
+    },
+    "lc.home.checkAgain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check again"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobar de nuevo"
+          }
+        }
+      }
+    },
+    "lc.home.openSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open settings"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir ajustes"
+          }
+        }
+      }
+    },
+    "lc.home.backup": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protect your data"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Protege tus datos"
+          }
+        }
+      }
+    },
+    "lc.home.manageBackups": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open backups"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abrir copias de seguridad"
+          }
+        }
+      }
+    },
+    "lc.home.backup.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backups could not be checked"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pudieron comprobar las copias de seguridad"
+          }
+        }
+      }
+    },
+    "lc.home.backup.emptyBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No backup files found here. Open Backups to make your first copy."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay copias de seguridad aquí. Abre Copias de seguridad para crear la primera."
+          }
+        }
+      }
+    },
+    "lc.home.backup.count %lld": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saved backup files: %lld"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Archivos de copia guardados: %lld"
+          }
+        }
+      }
+    },
+    "lc.home.backup.limit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep another copy outside this app. A saved file alone does not confirm that it can be restored."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guarda otra copia fuera de esta app. Un archivo guardado por sí solo no confirma que se pueda restaurar."
+          }
+        }
+      }
+    },
+    "lc.home.retry": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volver a intentar"
+          }
+        }
+      }
+    },
+    "lc.home.help": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Help and setup guide"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ayuda y guía de configuración"
+          }
+        }
+      }
+    },
+    "lc.appList.empty.filtered": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No apps match"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay apps que coincidan"
+          }
+        }
+      }
+    },
+    "lc.appList.empty.filteredBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear the search and group filters to show your apps."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borra la búsqueda y los filtros de grupos para ver tus apps."
+          }
+        }
+      }
+    },
+    "lc.appList.empty.clearFilters": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search and filters"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Borrar búsqueda y filtros"
+          }
+        }
+      }
+    },
+    "lc.appList.empty.secondary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No shared apps to show"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No hay apps compartidas que mostrar"
+          }
+        }
+      }
+    },
+    "lc.appList.empty.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No visible apps yet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aún no hay apps visibles"
+          }
+        }
+      }
+    },
+    "lc.appList.empty.body": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an app file (.ipa) from Files, or find an app in Sources. You choose what to add."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elige un archivo de app (.ipa) en Archivos, o busca una app en Fuentes. Tú eliges qué añadir."
+          }
+        }
+      }
+    },
+    "lc.appList.empty.chooseFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose an app file"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elegir un archivo de app"
+          }
+        }
+      }
+    },
     "lc.appBanner.addToHomeScreen" : {
       "extractionState" : "manual",
       "localizations" : {

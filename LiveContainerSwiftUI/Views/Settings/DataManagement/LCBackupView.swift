@@ -160,8 +160,15 @@ struct LCBackupView: View {
             }
 
             Section {
-                if manager.backups.isEmpty {
+                if let error = manager.backupListError {
+                    Text("lc.home.backup.unavailable".loc)
+                        .font(.headline)
+                    Text(error).font(.footnote).foregroundStyle(.secondary)
+                    Button("lc.home.retry".loc) { manager.refreshBackupList() }
+                } else if manager.backups.isEmpty {
                     Text("lc.backup.noBackups".loc).foregroundStyle(.gray)
+                    Text("lc.home.backup.emptyBody".loc)
+                        .font(.footnote).foregroundStyle(.secondary)
                 } else {
                     ForEach(manager.backups) { backup in
                         VStack(alignment: .leading, spacing: 4) {

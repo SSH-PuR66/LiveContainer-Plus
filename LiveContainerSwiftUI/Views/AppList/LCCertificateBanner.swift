@@ -20,7 +20,8 @@ struct LCCertificateBanner: View {
             return nil
         case .expiringSoon(let days):
             return ("lc.cert.banner.expiring.title".loc,
-                    "lc.cert.banner.expiring.body %lld".localizeWithFormat(days),
+                    days == 0 ? "lc.home.signing.lessThanDay".loc
+                        : "lc.cert.banner.expiring.body %lld".localizeWithFormat(days),
                     "clock.badge.exclamationmark",
                     .orange)
         case .expired:
@@ -28,6 +29,11 @@ struct LCCertificateBanner: View {
                     "lc.cert.banner.expired.body".loc,
                     "xmark.seal",
                     .red)
+        case .expiryUnavailable:
+            return ("lc.home.signing.expiryUnknown".loc,
+                    "lc.home.signing.expiryUnknownBody".loc,
+                    "questionmark.circle",
+                    .orange)
         case .revoked:
             return ("lc.cert.banner.revoked.title".loc,
                     "lc.cert.banner.revoked.body".loc,

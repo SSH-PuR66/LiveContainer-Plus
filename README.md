@@ -6,23 +6,22 @@
   <a href="https://github.com/SSH-PuR66/LiveContainer-Plus/actions/workflows/build.yml"><img alt="build" src="https://github.com/SSH-PuR66/LiveContainer-Plus/actions/workflows/build.yml/badge.svg"></a>
   <a href="https://github.com/SSH-PuR66/LiveContainer-Plus/releases/tag/nightly"><img alt="nightly" src="https://img.shields.io/badge/release-nightly-1f6feb?style=flat-square&labelColor=161b22"></a>
   <img alt="ios" src="https://img.shields.io/badge/iOS-15%20%E2%80%93%2026-8b949e?style=flat-square&labelColor=161b22">
-  <img alt="verified" src="https://img.shields.io/badge/on--device-iPhone%2017%20%C2%B7%20iOS%2026.6-3fb950?style=flat-square&labelColor=161b22">
-  <a href="https://github.com/SSH-PuR66/LiveContainer-Plus/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/badge/license-Apache--2.0-8b949e?style=flat-square&labelColor=161b22"></a>
+  <a href="https://github.com/SSH-PuR66/LiveContainer-Plus/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/badge/license-AGPL--3.0-8b949e?style=flat-square&labelColor=161b22"></a>
   <a href="https://donate.stripe.com/28E9AVa46dUm7v570Ees00a"><img alt="tip" src="https://img.shields.io/badge/tip%20the%20project-Stripe-635bff?style=flat-square&labelColor=161b22"></a>
 </p>
 
 <h1 align="center">Massive upgrade</h1>
 
 <p align="center">
-  A fork of <a href="https://github.com/LiveContainer/LiveContainer">LiveContainer</a> that keeps everything the original does<br>
-  and fixes the four things that made a long app list painful to live with.
+  Free native tools for organizing apps, checking signing and protecting your data.<br>
+  A fork of <a href="https://github.com/LiveContainer/LiveContainer">LiveContainer</a> that keeps its existing app engine.
 </p>
 
 ---
 
 ## What changed
 
-LiveContainer's pitch is unlimited sideloaded apps in one app slot. Once you take it up on that, you end up with forty apps in a flat list, no backup, and a certificate that expires on a Tuesday without telling you. This fork is those four gaps closed, and nothing else touched.
+This fork adds app groups, backup and restore, signing checks and bulk sources. The comparison below refers to the upstream snapshot used for the fork, rather than a fresh audit of upstream.
 
 | | Upstream | Plus |
 |---|---|---|
@@ -32,6 +31,14 @@ LiveContainer's pitch is unlimited sideloaded apps in one app slot. Once you tak
 | Add sources | one URL at a time | **Bulk sources**: paste a list, add all, refresh in parallel, export the list as JSON |
 
 Everything is in `LiveContainerSwiftUI`, which Xcode 16+ picks up from the filesystem, so the upstream `project.pbxproj` is untouched and rebases stay clean. The full file-by-file list is in [CHANGELOG-FORK.md](./CHANGELOG-FORK.md); the reasoning behind each item, including why LiveContainer's real competitor is substitution rather than Sideloadly, is in [COMPETITIVE-ANALYSIS.md](./COMPETITIVE-ANALYSIS.md).
+
+## A simpler start — October 2, 2026
+
+The primary instance now starts on **Home**, with visible-app counts, observed signing status and saved backup-file counts from the existing managers. It links directly to My Apps, Sources, Settings, Backups and Help. Secondary instances keep their existing app-first layout, and on-launch backup maintenance still runs.
+
+Empty app lists offer **Choose an app file**; empty searches offer **Clear search and filters**. A backup read failure says it could not be checked, rather than reporting zero backups. Signing with no expiry date stays unknown; less than a day remaining is distinguished from expired. New copy is available in English and Spanish. No sample app inventory, fictional device status or simulated progress is shown.
+
+**Verification scope:** these source changes have not yet been built with Xcode or exercised on a device. Windows checks cover the string catalog and patch consistency. The workflow runs native Foundation date/filesystem tests before Archive; a successful CI run and real device checks are still required. Backup files alone do not establish a successful restore. See [native test instructions](.github/tests/home/README.md).
 
 ## Install
 
@@ -46,7 +53,7 @@ Sideload it the way you sideload anything else: SideStore, AltStore, Sideloadly,
 
 > The nightly IPAs are unsigned. If you install with a free Apple ID, extensions get stripped (each one would need its own app id), which turns off LiveProcess multitask mode and the share sheet. A paid developer account keeps them.
 
-## Verified on a device
+## Earlier device report — September 3, 2026
 
 On 2026-09-03 both nightly artifacts were re-signed on Windows with a free-tier development identity and installed over stock LiveContainer 3.8.0 on an iPhone 17 running iOS 26.6. Both launched. The existing guest-app container survived the upgrade. The fork's own screens have been opened; end-to-end runs of backup/restore and certificate renewal on hardware are the next item, and the changelog says so rather than implying otherwise.
 
@@ -78,4 +85,4 @@ Upstream's warning stands here too: any build of LiveContainer has full access t
 
 ## License
 
-[Apache License 2.0](./LICENSE), same as upstream.
+[GNU Affero General Public License v3](./LICENSE), as recorded in this checkout's license file. Earlier Apache 2.0 references were incorrect.

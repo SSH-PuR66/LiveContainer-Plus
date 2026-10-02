@@ -17,6 +17,7 @@ struct LCTabView: View {
     @State var errorInfo = ""
     
     @State var previousSelectedTab : LCTabIdentifier = .apps
+    @State private var didRunLaunchMaintenance = false
     
     @EnvironmentObject var sharedModel : SharedModel
     @EnvironmentObject var sceneDelegate: SceneDelegate
@@ -43,6 +44,9 @@ struct LCTabView: View {
             if #available(iOS 19.0, *), SharedModel.isLiquidGlassSearchEnabled {
                 TabView(selection: $sharedModel.selectedTab) {
                     if DataManager.shared.model.multiLCStatus != 2 {
+                        Tab("lc.home.title".loc, systemImage: "house", value: LCTabIdentifier.home) {
+                            LCHomeView()
+                        }
                         Tab("lc.tabView.sources".loc, systemImage: "books.vertical", value: LCTabIdentifier.sources) {
                             sourcesView
                         }
@@ -72,6 +76,9 @@ struct LCTabView: View {
             } else {
                 TabView(selection: $sharedModel.selectedTab) {
                     if DataManager.shared.model.multiLCStatus != 2 {
+                        LCHomeView()
+                            .tabItem { Label("lc.home.title".loc, systemImage: "house") }
+                            .tag(LCTabIdentifier.home)
                         sourcesView
                             .tabItem {
                                 Label("lc.tabView.sources".loc, systemImage: "books.vertical")
@@ -143,6 +150,7 @@ struct LCTabView: View {
             checkAndSaveBundleId()
             checkGetTaskAllow()
             checkPrivateContainerBookmark()
+            runLaunchMaintenance()
         }
         .onReceive(pub) { out in
             if let scene1 = sceneDelegate.window?.windowScene, let scene2 = out.object as? UIWindowScene, scene1 == scene2 {
@@ -190,6 +198,17 @@ struct LCTabView: View {
         } while(false)
 
         sharedModel.deepLink = url
+    }
+
+    /// Keep existing on-launch maintenance running even when Home is the first tab.
+    private func runLaunchMaintenance() {
+        guard !didRunLaunchMaintenance else { return }
+        didRunLaunchMaintenance = true
+        LCAppGroupManager.shared.pruneMissingApps(knownApps: sharedModel.apps + sharedModel.hiddenApps)
+        Task { await LCCertificateMonitor.shared.refreshIfStale() }
+        let apps = sharedModel.apps
+        let tweaks = tweakFolderNames
+        Task { await LCBackupManager.shared.runAutoBackupIfDue(apps: apps, tweakFolderNames: tweaks) }
     }
     
     func closeDuplicatedWindow() {

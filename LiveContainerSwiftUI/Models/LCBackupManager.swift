@@ -153,6 +153,10 @@ class LCBackupManager: ObservableObject {
     ]
 
     @Published private(set) var backups: [LCBackupFile] = []
+    @Published private(set) var backupListError: String?
+    private let backupListRefresher = LCBackupListRefresher(scanner: {
+        LCBackupListing.scan(at: $0, fileExtension: lcBackupFileExtension)
+    })
     @Published private(set) var isBusy = false
     @Published private(set) var progressText: String = ""
     @Published private(set) var progressFraction: Double = 0
@@ -241,25 +245,31 @@ class LCBackupManager: ObservableObject {
     // MARK: - Listing
 
     func refreshBackupList() {
-        let fm = FileManager.default
-        guard let entries = try? fm.contentsOfDirectory(
-            at: Self.backupDirectory,
-            includingPropertiesForKeys: [.fileSizeKey, .creationDateKey],
-            options: [.skipsHiddenFiles]) else {
-            backups = []
-            return
-        }
+        startBackupListRefresh()
+    }
 
-        backups = entries
-            .filter { $0.pathExtension == lcBackupFileExtension }
-            .map { url in
-                let values = try? url.resourceValues(forKeys: [.fileSizeKey, .creationDateKey])
-                return LCBackupFile(url: url,
-                                    byteSize: Int64(values?.fileSize ?? 0),
-                                    createdAt: values?.creationDate ?? .distantPast,
-                                    manifest: nil)
+    private func refreshBackupListAndWait() async {
+        startBackupListRefresh()
+        await backupListRefresher.waitUntilSettled()
+    }
+
+    private func startBackupListRefresh() {
+        backupListRefresher.refresh(at: Self.backupDirectory) { [weak self] snapshot in
+            guard let self else { return }
+            switch snapshot {
+            case .files(let files):
+                self.backupListError = nil
+                self.backups = files.map { file in
+                    LCBackupFile(url: file.url,
+                                 byteSize: file.byteSize,
+                                 createdAt: file.createdAt,
+                                 manifest: nil)
+                }
+            case .unavailable(let error):
+                // Preserve the last list, but never present a failed read as an empty folder.
+                self.backupListError = error
             }
-            .sorted { $0.createdAt > $1.createdAt }
+        }
     }
 
     /// Reads a manifest without extracting the whole archive.
@@ -469,8 +479,14 @@ class LCBackupManager: ObservableObject {
         }
 
         progressFraction = 1.0
-        refreshBackupList()
+        // Creation uses the refreshed inventory to verify the written archive. Keep that
+        // dependency explicit now that UI refresh requests return before their scan finishes.
+        await refreshBackupListAndWait()
+        if let error = backupListError {
+            throw LCBackupError.archiveFailed("Backup was written, but its folder could not be read. Previous backups were retained: \(error)")
+        }
         pruneOldBackups()
+        await backupListRefresher.waitUntilSettled()
 
         guard let created = backups.first(where: { $0.url == destination }) else {
             throw LCBackupError.archiveFailed("Backup file missing after write.")
@@ -676,6 +692,8 @@ class LCBackupManager: ObservableObject {
 
     /// Keeps the newest `retentionCount` archives and deletes the rest.
     func pruneOldBackups() {
+        // A preserved display list is not a current inventory for destructive retention.
+        guard backupListError == nil else { return }
         let keep = retentionCount
         guard backups.count > keep else { return }
         for backup in backups.dropFirst(keep) {

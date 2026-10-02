@@ -4,7 +4,7 @@ Changes layered on top of the upstream `LiveContainer-main` snapshot (extracted 
 `LiveContainer-main.zip`, 2026-07-31). See `COMPETITIVE-ANALYSIS.md` for the reasoning behind
 each item.
 
-> **Runs on a device.** Compiled by GitHub Actions on `macos-latest` with Xcode 26.2 and
+> **Earlier build/device report — September 3, 2026.** Compiled by GitHub Actions on `macos-latest` with Xcode 26.2 and
 > published to the `nightly` release. On 2026-09-03 both nightly artifacts were re-signed from
 > Windows with a free-tier development identity and installed over stock LiveContainer 3.8.0 on
 > an iPhone 17 running iOS 26.6; each launched, and the existing guest-app container survived the
@@ -15,6 +15,19 @@ each item.
 > time on a free-tier profile. The new features have been opened, not yet exercised end to end.
 
 ---
+
+## October 2, 2026 — native usability source changes
+
+- Added a plain Home screen using actual visible-app, certificate-monitor and backup-list state; no demo inventory or guessed device status. The primary instance starts on Home, while secondary instances remain app-first.
+- Moved existing launch maintenance to the tab shell so scheduled backups still run before visiting My Apps. App import, deep links, signing and restore remain on their existing routes.
+- Added app-file and clear-filter actions to empty app lists; backup-list read errors are distinct from empty folders.
+- Extracted Foundation signing-date rules: missing/invalid expiry is unknown, future/nonfinite check timestamps refresh, and a future expiry under one day is not already expired.
+- Added native date and real temporary-directory tests before the workflow's Archive step, plus English/Spanish copy.
+- Moved backup directory enumeration, metadata reads and sorting off the main actor. A Foundation refresh coordinator applies only the latest request, discards cancelled results, and preserves the existing missing-folder/read-error behavior. Added controlled overlapping-request and cancellation tests; no measured speedup or CVE claim.
+- Retention skips deletion when the current backup inventory is unreadable. Creation reports that the archive was written and earlier backups were retained, rather than pruning from the preserved display list.
+- Corrected README licensing to the checked-in GNU AGPL v3; LICENSE itself is unchanged.
+
+These changes still require a successful macOS/Xcode build and device verification. The September 3 report above concerns earlier artifacts.
 
 ## Added files
 
@@ -65,8 +78,8 @@ New Swift files need no `project.pbxproj` edit: `LiveContainerSwiftUI` is a
 
 ## Behavioural notes worth knowing
 
-- **Backups exclude the signing certificate and its password by design**, so an archive is
-  safe to share or move between devices.
+- **Backups exclude the signing certificate and its password by design**. Archives still
+  contain selected app data and settings; review private contents before sharing them.
 - **Backup staging copies before zipping**, so a backup transiently needs roughly 2× its
   uncompressed size in free space. `createBackup` pre-flights this and fails with a specific
   error rather than filling the disk.
@@ -109,7 +122,7 @@ stock LiveContainer rather than installing alongside it.
 
 ## Known gaps
 
-- Compiles, but never launched on a device — no feature here is runtime-verified.
+- The September 3 report covers earlier artifacts and opened screens. October 2 changes are not yet compiled or device-verified; backup/restore and renewal still need end-to-end hardware checks.
 - `LCBackupManager.readManifest` is unused by the current UI (the restore flow goes through
   `prepareRestore`); it is kept as a utility for a future backup-detail view.
 - Backups land in `Documents/Backups`. A user-chosen destination via

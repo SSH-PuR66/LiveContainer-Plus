@@ -80,8 +80,16 @@ if case .unavailable(let error) = LCBackupListing.read(at: archive) {
 try Data([9]).write(to: root.appendingPathComponent("ignored.txt"))
 try Data([9]).write(to: root.appendingPathComponent(".hidden.lcbackup"))
 if case .files(let files) = LCBackupListing.scan(at: root) {
-    expect(files.count == 1 && files.first?.url == archive,
-           "The metadata snapshot includes only visible backup files")
+    let fixtureDescription = "count=\(files.count), names=\(files.map { $0.url.lastPathComponent }.joined(separator: ", "))"
+    expect(files.count == 1,
+           "The metadata snapshot includes exactly one visible backup file; \(fixtureDescription)")
+    if let listedURL = files.first?.url, listedURL != archive {
+        print("Fixture URL representation differs: actual=\(listedURL.absoluteString), baseURL=\(listedURL.baseURL?.absoluteString ?? "<nil>"); expected=\(archive.absoluteString), baseURL=\(archive.baseURL?.absoluteString ?? "<nil>")")
+    }
+    let listedPath = files.first?.url.resolvingSymlinksInPath().standardizedFileURL.path
+    let expectedPath = archive.resolvingSymlinksInPath().standardizedFileURL.path
+    expect(listedPath == expectedPath,
+           "The metadata snapshot identifies the actual fixture archive; \(fixtureDescription), actualPath=\(listedPath ?? "<nil>"), expectedPath=\(expectedPath)")
     expect(files.first?.byteSize == 3, "The snapshot carries the actual archive size")
 } else { preconditionFailure("The metadata snapshot should be readable") }
 if case .files(let files) = LCBackupListing.scan(at: root.appendingPathComponent("missing")) {
